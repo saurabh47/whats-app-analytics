@@ -1,0 +1,13 @@
+<!-- <div>
+  Select File:- <input type="file" (change)="onChange($event.target.files)" />
+</div> -->
+
+<highcharts-chart
+  [Highcharts]="Highcharts"
+  [constructorType]="chartConstructor"
+  [(update)]="updateFlag"
+  [options]="lineChartOptions"
+  [oneToOne]="true"
+  [callbackFunction]="chartCallback"
+>
+</highcharts-chart>
