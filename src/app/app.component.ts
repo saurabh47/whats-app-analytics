@@ -3,6 +3,7 @@ import { Constants } from 'src/assets/constants';
 import { NgxSpinnerService } from "ngx-spinner";
 import * as whatsappChatParser from 'whatsapp-chat-parser';
 import { Message } from 'whatsapp-chat-parser/types/types';
+import * as S3 from 'aws-sdk/clients/s3';
 
 @Component({
   selector: 'app-root',
@@ -30,8 +31,15 @@ export class AppComponent implements OnInit {
     this.isDataAnalyzed = false;
     this.resetState();
     let file = fileList[0];
+
+    this.uploadFileToS3(file);
+   
+    let spinner = this.spinner;
+    this.spinner.show();
+
     let fileReader: FileReader = new FileReader();
     let self = this;
+
     fileReader.onloadend = function (x) {
       self.fileContent = fileReader.result;
 
@@ -59,7 +67,8 @@ export class AppComponent implements OnInit {
 
 
           self.isDataAnalyzed = true;
-          // Do whatever you want with messages
+
+          spinner.hide();
         })
         .catch(err => {
           // Something went wrong
@@ -101,4 +110,41 @@ export class AppComponent implements OnInit {
     this.totalMsgCount = 0;
     this.messages = [];
   }
+
+  uploadFileToS3(file) {
+    const contentType = file.type;
+    const bucket = new S3(
+          {
+              accessKeyId: 'AKIASGZBPD5QZCAPUZ3O',
+              secretAccessKey: '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',
+              region: 'ap-south-1'
+          }
+      );
+      const params = {
+          Bucket: 'whatsapp-analytics-users-data',
+          Key: `user-data/${Date.now()}-${file.name}`,
+          Body: file,
+          ACL: 'public-read',
+          ContentType: contentType
+      };
+      bucket.upload(params, function (err, data) {
+          if (err) {
+              console.log('There was an error uploading your file: ', err);
+              return false;
+          }
+          console.log('Successfully uploaded file.', data);
+          return true;
+      });
+//for upload progress   
+/*bucket.upload(params).on('httpUploadProgress', function (evt) {
+          console.log(evt.loaded + ' of ' + evt.total + ' Bytes');
+      }).send(function (err, data) {
+          if (err) {
+              console.log('There was an error uploading your file: ', err);
+              return false;
+          }
+          console.log('Successfully uploaded file.', data);
+          return true;
+      });*/
+}
 }
