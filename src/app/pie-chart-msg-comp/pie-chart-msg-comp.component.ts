@@ -1,4 +1,4 @@
-import { Component, OnInit,AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
 import * as Highcharts from 'highcharts/highcharts.src.js';
 import { Constants } from 'src/assets/constants';
 
@@ -7,15 +7,19 @@ import { Constants } from 'src/assets/constants';
   templateUrl: './pie-chart-msg-comp.component.html',
   styleUrls: ['./pie-chart-msg-comp.component.scss']
 })
-export class PieChartMsgCompComponent implements OnInit  {
+export class PieChartMsgCompComponent implements OnInit {
+
+  @Input('totalMsgCount') totalMsgCount = 0;
+  @Input('messageCountPerAuthor') messageCountPerAuthor: Map<String, number>;
+
   updateFlag = true;
   Highcharts = Highcharts;
   chartConstructor = 'chart';
   data = [];
   chartCallback = (chart) => {
-      setTimeout(() => {
-        chart.reflow();
-      }, 0);
+    setTimeout(() => {
+      chart.reflow();
+    }, 0);
   };
 
   chartOptions = {
@@ -24,10 +28,10 @@ export class PieChartMsgCompComponent implements OnInit  {
       backgroundColor: '#fafafa',
     },
     title: {
-      text: `Total Messages ${Constants.totalMsgCount}`
+      text: `Total Messages ${this.totalMsgCount}`
     },
     subtitle: {
-      text: 'Saurabh Vs Pooja'
+      // text: 'Saurabh Vs Pooja'
     },
     plotOptions: {
       pie: {
@@ -50,7 +54,7 @@ export class PieChartMsgCompComponent implements OnInit  {
         innerSize: 100
       }
     },
-    colors: ['#9ECFE0', '#F4AFBF'],
+    // colors: ['#9ECFE0', '#F4AFBF'],
     series: [{
       type: 'pie',
       name: 'Messages',
@@ -61,10 +65,19 @@ export class PieChartMsgCompComponent implements OnInit  {
       enabled: false
     },
   };
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
-    this.chartOptions.series[0].data = [{ name: 'Saurabh', 'y': Constants.saurabhMsgCount }, { name: 'Pooja', 'y': Constants.poojaMsgCount }];
+    this.chartOptions.title.text = `Total Messages ${this.totalMsgCount}`;
+
+    this.chartOptions.series[0].data = [];
+
+    for (let authMsg of this.messageCountPerAuthor) {
+      this.chartOptions.series[0].data.push({ name: authMsg[0], 'y': authMsg[1] })
+    }
+
+
+    // this.chartOptions.series[0].data = [{ name: 'Saurabh', 'y': Constants.saurabhMsgCount }, { name: 'Pooja', 'y': Constants.poojaMsgCount }];
     this.updateFlag = true;
   }
 

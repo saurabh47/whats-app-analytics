@@ -24,6 +24,7 @@
     "ngx-spinner": "^9.0.1",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
+    "whatsapp-chat-parser": "^3.2.1",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {

@@ -318,8 +318,18 @@
     </svg>
   </a>
 </div>
-<div class="card-container">
-  <div class="card card-small" style="background:#9ecfe078">
+<div class="card-container" *ngIf="isDataAnalyzed">
+
+  <div class="card card-small" *ngFor="let msgCntPerAuth of messageCountPerAuthor | keyvalue"
+    style="background:#9ecfe078">
+    <span>{{ msgCntPerAuth.key }} : <b>{{ msgCntPerAuth.value | number}}</b> messages</span>
+  </div>
+
+  <div class="card card-small">
+    <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
+  </div>
+
+  <!-- <div class="card card-small" style="background:#9ecfe078">
     <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
   </div>
   <div class="card card-small" style="background:#f4afbf7a">
@@ -327,16 +337,18 @@
   </div>
   <div class="card card-small">
     <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
-  </div>
+  </div> -->
 </div>
 <!-- <app-pie-chart-msg-comp class="item"></app-pie-chart-msg-comp>
   <app-daily-chats-anlysis class="item"></app-daily-chats-anlysis>
   <app-emoji-bar-chart class="item"></app-emoji-bar-chart> -->
 
-<div class="widget-container">
-  <app-pie-chart-msg-comp class="item"></app-pie-chart-msg-comp>
-  <app-daily-chats-anlysis class="item"></app-daily-chats-anlysis>
-  <app-emoji-bar-chart class="item"></app-emoji-bar-chart>
+<div class="widget-container" *ngIf="isDataAnalyzed">
+  <app-pie-chart-msg-comp class="item" [messageCountPerAuthor]="messageCountPerAuthor" [totalMsgCount]="totalMsgCount">
+  </app-pie-chart-msg-comp>
+  <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
+  <app-emoji-bar-chart class="item" [messageCountPerAuthor]="messageCountPerAuthor" [messages]="messages">
+  </app-emoji-bar-chart>
 </div>
 
 <div class="content" role="main">
@@ -538,7 +550,7 @@
     </svg>
 
     <span>WhatsApp Analytics Developed By <b>Saurabh Gangamwar</b></span>
-
+    <input type="file" (change)="onChange($event.target.files)" />
     <!-- <svg
       id="rocket-smoke"
       alt="Rocket Ship Smoke"
