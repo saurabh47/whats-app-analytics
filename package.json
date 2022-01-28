@@ -23,6 +23,7 @@
     "aws-sdk": "^2.1065.0",
     "highcharts": "^8.0.3",
     "highcharts-angular": "^2.4.0",
+    "jszip": "^3.7.1",
     "ngx-spinner": "^8.1.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
