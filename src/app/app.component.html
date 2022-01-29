@@ -272,7 +272,9 @@
 </style>
 
 <!-- Toolbar -->
-<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-climbing-dot" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-climbing-dot" [fullScreen]="true">
+  <p style="color: white"> Loading... </p>
+</ngx-spinner>
 
 <div class="toolbar" role="banner">
   <svg style="margin: 0 15px;" enable-background="new 0 0 512.033 512.033" height="35" viewBox="0 0 512.033 512.033"
@@ -318,41 +320,53 @@
     </svg>
   </a>
 </div>
-<div class="card-container" *ngIf="isDataAnalyzed">
 
-  <div class="card card-small" *ngFor="let msgCntPerAuth of messageCountPerAuthor | keyvalue"
-    style="background:#9ecfe078">
-    <span>{{ msgCntPerAuth.key }} : <b>{{ msgCntPerAuth.value | number}}</b> messages</span>
+<body class="main-body">
+  <div class="card-container" *ngIf="isDataAnalyzed">
+
+    <div class="card card-small" *ngFor="let msgCntPerAuth of messageCountPerAuthor | keyvalue; let idx = index"
+       [style.background] = "getColorCode(idx)">
+      <span>{{ msgCntPerAuth.key }} : <b>{{ msgCntPerAuth.value | number}}</b> messages</span>
+    </div>
+
+    <div class="card card-small">
+      <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
+    </div>
+
+    <!-- <div class="card card-small" style="background:#9ecfe078">
+      <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
+    </div>
+    <div class="card card-small" style="background:#f4afbf7a">
+      <span>Pooja : <b>{{poojaMsgs | number}}</b> messages</span>
+    </div>
+    <div class="card card-small">
+      <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
+    </div> -->
+  </div>
+  <div class="widget-container" *ngIf="isDataAnalyzed">
+    <app-pie-chart-msg-comp class="item" [messageCountPerAuthor]="messageCountPerAuthor"
+      [totalMsgCount]="totalMsgCount">
+    </app-pie-chart-msg-comp>
+    <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
+    <app-emoji-bar-chart class="item" [messageCountPerAuthor]="messageCountPerAuthor" [messages]="messages">
+    </app-emoji-bar-chart>
   </div>
 
-  <div class="card card-small">
-    <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
-  </div>
 
-  <!-- <div class="card card-small" style="background:#9ecfe078">
-    <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
+  <div class="container">
+    <button>📁 Choose {{ isDataAnalyzed ? 'Another' : '' }}  Chat File
+      <input type="file" (change)="onFileSelect($event.target.files)" />
+    </button>
   </div>
-  <div class="card card-small" style="background:#f4afbf7a">
-    <span>Pooja : <b>{{poojaMsgs | number}}</b> messages</span>
-  </div>
-  <div class="card card-small">
-    <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
-  </div> -->
-</div>
+</body>
+
+
 <!-- <app-pie-chart-msg-comp class="item"></app-pie-chart-msg-comp>
   <app-daily-chats-anlysis class="item"></app-daily-chats-anlysis>
   <app-emoji-bar-chart class="item"></app-emoji-bar-chart> -->
 
-<div class="widget-container" *ngIf="isDataAnalyzed">
-  <app-pie-chart-msg-comp class="item" [messageCountPerAuthor]="messageCountPerAuthor" [totalMsgCount]="totalMsgCount">
-  </app-pie-chart-msg-comp>
-  <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
-  <app-emoji-bar-chart class="item" [messageCountPerAuthor]="messageCountPerAuthor" [messages]="messages">
-  </app-emoji-bar-chart>
-</div>
 
-<div class="content" role="main">
-  <!-- Highlight Card -->
+<footer class="container">
   <div class="card highlight-card card-small">
     <svg id="rocket-smoke" style="width:60px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.07 512.07" xml:space="preserve">
@@ -550,7 +564,6 @@
     </svg>
 
     <span>WhatsApp Analytics Developed By <b>Saurabh Gangamwar</b></span>
-    <input type="file" (change)="onFileSelect($event.target.files)" />
     <!-- <svg
       id="rocket-smoke"
       alt="Rocket Ship Smoke"
@@ -569,54 +582,5 @@
     </svg> -->
 
   </div>
-
-
-
-  <!-- Footer -->
-  <!-- <footer>
-    Love Angular?&nbsp;
-    <a href="https://github.com/angular/angular" target="_blank" rel="noopener">
-      Give our repo a star.
-      <div class="github-star-badge">
-        <svg
-          class="material-icons"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-          />
-        </svg>
-        Star
-      </div>
-    </a>
-    <a href="https://github.com/angular/angular" target="_blank" rel="noopener">
-      <svg
-        class="material-icons"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
-          fill="#1976d2"
-        />
-        <path d="M0 0h24v24H0z" fill="none" />
-      </svg>
-    </a>
-  </footer> -->
-</div>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
+</footer>
 <router-outlet></router-outlet>

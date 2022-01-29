@@ -54,7 +54,7 @@ export class PieChartMsgCompComponent implements OnInit {
         innerSize: 100
       }
     },
-    // colors: ['#9ECFE0', '#F4AFBF'],
+    colors: Constants.COLOR_CODES,
     series: [{
       type: 'pie',
       name: 'Messages',

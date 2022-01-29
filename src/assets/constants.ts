@@ -4,5 +4,8 @@ export class Constants {
   public static saurabhMsgCount = 13606;
   public static poojaMsgCount = 11238;
   public static totalMsgCount = 24844;
+
+  public static COLOR_CODES = ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
+  '#FF9655', '#FFF263', '#6AF9C4'];
 }
 

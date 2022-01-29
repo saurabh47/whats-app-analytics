@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts/highcharts.src.js';
+import { Constants } from 'src/assets/constants';
 import { Message } from 'whatsapp-chat-parser/types/types';
 
 @Component({
@@ -81,8 +82,7 @@ export class EmojiBarChartComponent implements OnInit {
           'Emoji Count: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
       }
     },
-    // colors: ['#9ECFE0', '#F4AFBF'],
-
+    colors: Constants.COLOR_CODES,
     series: [],
     credits: {
       enabled: false
