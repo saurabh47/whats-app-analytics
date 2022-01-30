@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
       zip.loadAsync(file) /* = file blob */
         .then(function (zipContent) {
           // process ZIP file content here
-          console.log(zip);
           for (let fileName in zipContent.files) {
             if (self.getFileExtension(fileName) == 'txt') {
               zipContent.files[fileName].async('blob').then(function (fileData) {
@@ -111,6 +110,8 @@ export class AppComponent implements OnInit {
           for (let analysis of self.analysisPerAuthor) {
             self.totalMsgCount = self.totalMsgCount + analysis[1].messageCount;
           }
+
+          console.log(self.analysisPerAuthor);
 
           self.isDataAnalyzed = true;
 
@@ -187,6 +188,10 @@ export class DataAnalysis {
 
   emojiCountMap: object = {};
 
+  hourlyMessageCount: number[] = Array(24).fill(0);
+
+  weekDayMessageCount: number[] = Array(7).fill(0);
+
   get messageCount() {
     return this.messages.length;
   }
@@ -198,6 +203,11 @@ export class DataAnalysis {
 
   addMessage(message: Message) {
     getEmojiFrequency(this.emojiCountMap, message.message);
+
+    console.log(message.message, message.date.getHours());
+    this.hourlyMessageCount[message.date.getHours()] += 1; 
+
+    this.weekDayMessageCount[message.date.getDay()] += 1;
 
     this.messages.push(message);
   }

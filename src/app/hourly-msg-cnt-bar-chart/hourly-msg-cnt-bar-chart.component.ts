@@ -1,19 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts/highcharts.src.js';
+import * as Highcharts from 'highcharts/highcharts.src';
 import { COLOR_CODES } from 'src/@common/constant/config';
-import { Message } from 'whatsapp-chat-parser/types/types';
 import { DataAnalysis } from '../app.component';
 
 @Component({
-  selector: 'app-emoji-bar-chart',
-  templateUrl: './emoji-bar-chart.component.html',
-  styleUrls: ['./emoji-bar-chart.component.scss']
+  selector: 'app-hourly-msg-cnt-bar-chart',
+  templateUrl: './hourly-msg-cnt-bar-chart.component.html',
+  styleUrls: ['./hourly-msg-cnt-bar-chart.component.scss']
 })
-export class EmojiBarChartComponent implements OnInit {
+export class HourlyMsgCntBarChartComponent implements OnInit {
 
   @Input('analysisPerAuthor') analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
-  emojiCategories = ['❤️', '😘', '😍', '🤣', '😅', '😂', '👍'];
+  hourlyCategories = ['0', '1', '2', '3', '4', '5', '6', '7', '8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
 
 
   updateFlag = true;
@@ -33,16 +32,19 @@ export class EmojiBarChartComponent implements OnInit {
 
     },
     title: {
-      text: "Emoji's Used"
+      text: "Total Messages by Hour of Day"
     },
 
-    accessibility: {
-      point: {
-        valueDescriptionFormat: '{index}. Age {xDescription}, {value}%.'
-      }
-    },
+    // accessibility: {
+    //   point: {
+    //     valueDescriptionFormat: '{index}. Age {xDescription}, {value}%.'
+    //   }
+    // },
     xAxis: [{
-      categories: this.emojiCategories,
+      title: {
+        text: 'Hour'
+      },
+      categories: this.hourlyCategories,
       reversed: false,
       labels: {
         step: 1
@@ -50,16 +52,13 @@ export class EmojiBarChartComponent implements OnInit {
     }],
     yAxis: {
       title: {
-        text: "No. of emoji's"
+        text: 'No. of messages'
       },
       labels: {
         formatter: function () {
           return Math.abs(this.value);
         }
       },
-      accessibility: {
-        description: 'Percentage population',
-      }
     },
 
     plotOptions: {
@@ -67,12 +66,16 @@ export class EmojiBarChartComponent implements OnInit {
         stacking: 'normal'
       }
     },
-
     tooltip: {
       formatter: function () {
-        return '<b>' + this.series.name + ' ' + this.point.category + '</b><br/>' +
-          'Emoji Count: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
-      }
+        let tooltip = '';
+        for(let point of this.points) {
+          tooltip+= `<b> ${point.series.name} : ${point.y} </b><br/>`
+        }
+        tooltip+= `<b> Total Messages Count : ${this.points[0].total} </b>`;
+        return tooltip
+      },
+      shared: true
     },
     colors: COLOR_CODES,
     series: [],
@@ -87,19 +90,11 @@ export class EmojiBarChartComponent implements OnInit {
 
   ngOnInit() {
     for (let analysis of this.analysisPerAuthor) {
-      const emojiCountPerUser = [];
-      for (let emoji of this.emojiCategories) {
-        let emojiCnt = analysis[1].emojiCountMap[emoji] || 0;
-        
-        emojiCountPerUser.push(emojiCnt);
-      }
-
       this.chartOptions.series.push({
-        name: analysis[0],
-        data: emojiCountPerUser
+        name: analysis[1].author,
+        data: analysis[1].hourlyMessageCount
       });
     }
     this.updateFlag = true;
   }
-
 }
