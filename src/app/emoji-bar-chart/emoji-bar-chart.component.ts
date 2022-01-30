@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts/highcharts.src.js';
-import { Constants } from 'src/assets/constants';
+import { COLOR_CODES } from 'src/@common/constant/config';
 import { Message } from 'whatsapp-chat-parser/types/types';
+import { DataAnalysis } from '../app.component';
 
 @Component({
   selector: 'app-emoji-bar-chart',
@@ -10,8 +11,7 @@ import { Message } from 'whatsapp-chat-parser/types/types';
 })
 export class EmojiBarChartComponent implements OnInit {
 
-  @Input('messages') messages: Message[] = [];
-  @Input('messageCountPerAuthor') messageCountPerAuthor: Map<string, number> = new Map();
+  @Input('analysisPerAuthor') analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
   emojiCategories = ['❤️', '😘', '😍', '🤣', '😅', '😂', '👍'];
 
@@ -82,7 +82,7 @@ export class EmojiBarChartComponent implements OnInit {
           'Emoji Count: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
       }
     },
-    colors: Constants.COLOR_CODES,
+    colors: COLOR_CODES,
     series: [],
     credits: {
       enabled: false
@@ -94,22 +94,17 @@ export class EmojiBarChartComponent implements OnInit {
   }
 
   ngOnInit() {
-    //TODO: Optimize this code (n^3) complexity
     let toggle = false;
-    for (let msgCntAuth of this.messageCountPerAuthor) {
+    for (let analysis of this.analysisPerAuthor) {
       const emojiCountPerUser = [];
       for (let emoji of this.emojiCategories) {
-        let emojiCnt = 0;
-        for (let msg of this.messages) {
-          if (msg.author == msgCntAuth[0] && msg.message.indexOf(emoji) != -1) {
-            emojiCnt++;
-          }
-        }
+        let emojiCnt = analysis[1].emojiCountMap[emoji] || 0;
+        
         emojiCountPerUser.push(toggle ? emojiCnt : -emojiCnt);
       }
 
       this.chartOptions.series.push({
-        name: msgCntAuth[0],
+        name: analysis[0],
         data: emojiCountPerUser
       });
       console.log(this.chartOptions.series);

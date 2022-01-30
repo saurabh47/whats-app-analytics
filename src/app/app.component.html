@@ -324,9 +324,9 @@
 <body class="main-body">
   <div class="card-container" *ngIf="isDataAnalyzed">
 
-    <div class="card card-small" *ngFor="let msgCntPerAuth of messageCountPerAuthor | keyvalue; let idx = index"
+    <div class="card card-small" *ngFor="let analysis of analysisPerAuthor | keyvalue; let idx = index"
        [style.background] = "getColorCode(idx)">
-      <span>{{ msgCntPerAuth.key }} : <b>{{ msgCntPerAuth.value | number}}</b> messages</span>
+      <span>{{ analysis.value.author }} : <b>{{ analysis.value.messageCount | number}}</b> messages</span>
     </div>
 
     <div class="card card-small">
@@ -344,11 +344,11 @@
     </div> -->
   </div>
   <div class="widget-container" *ngIf="isDataAnalyzed">
-    <app-pie-chart-msg-comp class="item" [messageCountPerAuthor]="messageCountPerAuthor"
+    <app-pie-chart-msg-comp class="item" [analysisPerAuthor]="analysisPerAuthor"
       [totalMsgCount]="totalMsgCount">
     </app-pie-chart-msg-comp>
     <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
-    <app-emoji-bar-chart class="item" [messageCountPerAuthor]="messageCountPerAuthor" [messages]="messages">
+    <app-emoji-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor">
     </app-emoji-bar-chart>
   </div>
 

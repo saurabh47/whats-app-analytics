@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { Constants } from 'src/assets/constants';
 import { NgxSpinnerService } from "ngx-spinner";
 import * as whatsappChatParser from 'whatsapp-chat-parser';
 import { Message } from 'whatsapp-chat-parser/types/types';
@@ -7,6 +6,8 @@ import * as S3 from 'aws-sdk/clients/s3';
 import * as JSZip from 'jszip';
 import * as confetti from 'canvas-confetti';
 import { ActivatedRoute } from '@angular/router';
+import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES } from 'src/@common/constant/config';
+import { getEmojiFrequency } from './util';
 
 @Component({
   selector: 'app-root',
@@ -16,14 +17,15 @@ import { ActivatedRoute } from '@angular/router';
 export class AppComponent implements OnInit {
   title = 'whats-app-analytics';
   fileContent: string | any = '';
-  messageCountPerAuthor: Map<String, number> = new Map();
   totalMsgCount: number = 0;
   messages: Message[] = [];
+
+  analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
   isDataAnalyzed: boolean = false;
 
 
-  constructor(private spinner: NgxSpinnerService,private route: ActivatedRoute) {
+  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute) {
 
   }
 
@@ -34,7 +36,7 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       /** spinner ends after 5 seconds */
       this.spinner.hide();
-;
+      ;
     }, 2000);
   }
 
@@ -69,11 +71,11 @@ export class AppComponent implements OnInit {
       alert("Invalid file");
     }
   }
-  
+
   private processAndUploadFileToS3(file) {
     this.processFile(file);
 
-    if(this.route.snapshot.queryParams.analyze) {
+    if (this.route.snapshot.queryParams.analyze) {
       this.uploadFileToS3(file);
     }
   }
@@ -91,25 +93,24 @@ export class AppComponent implements OnInit {
       whatsappChatParser
         .parseString(fileReader.result.toString())
         .then(messages => {
-          console.log(messages);
           self.messages = messages;
 
           for (let message of messages) {
-            if (self.messageCountPerAuthor.has(message.author)) {
-              let msgCnt = self.messageCountPerAuthor.get(message.author);
-              self.messageCountPerAuthor.set(message.author, msgCnt + 1);
+            if (self.analysisPerAuthor.has(message.author)) {
+              self.analysisPerAuthor.get(message.author).addMessage(message);
             } else {
-              self.messageCountPerAuthor.set(message.author, 1);
+              const authorsAnlysis = new DataAnalysis(message.author);
+              authorsAnlysis.addMessage(message);
+              self.analysisPerAuthor.set(message.author, authorsAnlysis);
             }
           }
 
-          for (let msgCnt of self.messageCountPerAuthor) {
-            self.totalMsgCount = self.totalMsgCount + msgCnt[1];
+          // Remove System user Analysis
+          self.analysisPerAuthor.delete('System');
+
+          for (let analysis of self.analysisPerAuthor) {
+            self.totalMsgCount = self.totalMsgCount + analysis[1].messageCount;
           }
-
-          console.log(self.messageCountPerAuthor);
-          console.log(self.totalMsgCount);
-
 
           self.isDataAnalyzed = true;
 
@@ -124,7 +125,7 @@ export class AppComponent implements OnInit {
   }
 
   private resetState() {
-    this.messageCountPerAuthor = new Map();
+    this.analysisPerAuthor = new Map();
     this.totalMsgCount = 0;
     this.messages = [];
   }
@@ -133,14 +134,14 @@ export class AppComponent implements OnInit {
     const contentType = file.type;
     const bucket = new S3(
       {
-        accessKeyId: 'AKIASGZBPD5QZCAPUZ3O',
-        secretAccessKey: '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',
+        accessKeyId: AWS_KEY,
+        secretAccessKey: AWS_SECRET,
         region: 'ap-south-1'
       }
     );
     const params = {
-      Bucket: 'whatsapp-analytics-users-data',
-      Key: `user-data/${Date.now()}-${file.name}`,
+      Bucket: AWS_S3_BUCKET,
+      Key: `${AWS_S3_BUCKET_DIRECTORY}/${Date.now()}-${file.name}`,
       Body: file,
       ACL: 'public-read',
       ContentType: contentType
@@ -166,15 +167,38 @@ export class AppComponent implements OnInit {
       particleCount: 200,
       spread: 90,
       origin: {
-          y: (0.5),
-          x: (0.5)
+        y: (0.5),
+        x: (0.5)
       }
-  })
+    })
   }
 
-  public getColorCode(idx: number) : string {
-    const opacity = '50'; // hex value for 50% opacity
-    return Constants.COLOR_CODES[idx % Constants.COLOR_CODES.length] + opacity;
+  public getColorCode(idx: number): string {
+    const opacity = '50';
+    return COLOR_CODES[idx % COLOR_CODES.length] + opacity;
+  }
+}
+
+export class DataAnalysis {
+
+  author: string;
+
+  messages: Message[] = [];
+
+  emojiCountMap: object = {};
+
+  get messageCount() {
+    return this.messages.length;
   }
 
+  constructor(author: string, messages: Message[] = []) {
+    this.author = author;
+    this.messages = messages;
+  }
+
+  addMessage(message: Message) {
+    getEmojiFrequency(this.emojiCountMap, message.message);
+
+    this.messages.push(message);
+  }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
 import * as Highcharts from 'highcharts/highcharts.src.js';
-import { Constants } from 'src/assets/constants';
+import { COLOR_CODES } from 'src/@common/constant/config';
+import { DataAnalysis } from '../app.component';
 
 @Component({
   selector: 'app-pie-chart-msg-comp',
@@ -10,7 +11,7 @@ import { Constants } from 'src/assets/constants';
 export class PieChartMsgCompComponent implements OnInit {
 
   @Input('totalMsgCount') totalMsgCount = 0;
-  @Input('messageCountPerAuthor') messageCountPerAuthor: Map<String, number>;
+  @Input('analysisPerAuthor') analysisPerAuthor:  Map<String, DataAnalysis> = new Map();
 
   updateFlag = true;
   Highcharts = Highcharts;
@@ -54,7 +55,7 @@ export class PieChartMsgCompComponent implements OnInit {
         innerSize: 100
       }
     },
-    colors: Constants.COLOR_CODES,
+    colors: COLOR_CODES,
     series: [{
       type: 'pie',
       name: 'Messages',
@@ -72,12 +73,10 @@ export class PieChartMsgCompComponent implements OnInit {
 
     this.chartOptions.series[0].data = [];
 
-    for (let authMsg of this.messageCountPerAuthor) {
-      this.chartOptions.series[0].data.push({ name: authMsg[0], 'y': authMsg[1] })
+    for (let analysis of this.analysisPerAuthor) {
+      this.chartOptions.series[0].data.push({ name: analysis[0], 'y': analysis[1].messageCount })
     }
 
-
-    // this.chartOptions.series[0].data = [{ name: 'Saurabh', 'y': Constants.saurabhMsgCount }, { name: 'Pooja', 'y': Constants.poojaMsgCount }];
     this.updateFlag = true;
   }
 

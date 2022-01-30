@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts/highcharts.src.js';
-import { Constants } from 'src/assets/constants';
 
 @Component({
   selector: 'app-daily-chats-anlysis',
