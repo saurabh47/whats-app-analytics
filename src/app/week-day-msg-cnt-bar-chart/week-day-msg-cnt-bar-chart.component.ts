@@ -12,7 +12,7 @@ export class WeekDayMsgCntBarChartComponent implements OnInit {
 
   @Input('analysisPerAuthor') analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
-  days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 
   updateFlag = true;

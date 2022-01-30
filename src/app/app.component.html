@@ -38,7 +38,6 @@
 
   .toolbar {
     height: 60px;
-    margin: -8px;
     display: flex;
     align-items: center;
     background-color: #00bfa5;
@@ -322,44 +321,109 @@
 </div>
 
 <body class="main-body">
-  <div class="card-container" *ngIf="isDataAnalyzed">
+  <section class="visulizations-container" *ngIf="isDataAnalyzed">
+    <div class="card-container">
 
-    <div class="card card-small" *ngFor="let analysis of analysisPerAuthor | keyvalue; let idx = index"
-       [style.background] = "getColorCode(idx)">
-      <span>{{ analysis.value.author }} : <b>{{ analysis.value.messageCount | number}}</b> messages</span>
+      <div class="card card-small" *ngFor="let analysis of analysisPerAuthor | keyvalue; let idx = index"
+        [style.background]="getColorCode(idx)">
+        <span>{{ analysis.value.author }} : <b>{{ analysis.value.messageCount | number}}</b> messages</span>
+      </div>
+
+      <div class="card card-small">
+        <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
+      </div>
+
+      <!-- <div class="card card-small" style="background:#9ecfe078">
+        <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
+      </div>
+      <div class="card card-small" style="background:#f4afbf7a">
+        <span>Pooja : <b>{{poojaMsgs | number}}</b> messages</span>
+      </div>
+      <div class="card card-small">
+        <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
+      </div> -->
+    </div>
+    <div class="widget-container" *ngIf="isDataAnalyzed">
+      <app-pie-chart-msg-comp class="item" [analysisPerAuthor]="analysisPerAuthor" [totalMsgCount]="totalMsgCount">
+      </app-pie-chart-msg-comp>
+      <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
+      <app-emoji-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor">
+      </app-emoji-bar-chart>
+      <app-hourly-msg-cnt-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor"></app-hourly-msg-cnt-bar-chart>
+      <app-week-day-msg-cnt-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor">
+      </app-week-day-msg-cnt-bar-chart>
+    </div>
+  </section>
+
+
+  <section id="preview" class="main-container" *ngIf="!isDataAnalyzed">
+    <div class="container" style="margin-top: 20px;">
+      <img src="./assets/icon.svg" style="margin-right: 10px;">
+      <h1 style="font-size: 40px;">WhatsApp Analytics</h1>
+    </div>
+    <div class="preview_wrapper" style="margin-top: 25px;">
+      <img src="./assets/preview.png" style="max-height: 280px;border: 1px gray solid;">
+      <p class="main-message">
+        📊 Visualize your WhatsApp Chats !<br><br>
+
+        Find Some Interesting Patterns ❤
+      </p>
     </div>
 
-    <div class="card card-small">
-      <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
+    <div class="container" style="margin-top: 40px;">
+      <button>📁 Choose {{ isDataAnalyzed ? 'Another' : '' }} Chat File
+        <input type="file" (change)="onFileSelect($event.target.files)" />
+      </button>
+    </div>
+    <div class="container">
+      <p style="text-align: center;width: 100%;">
+        <b>Note</b> We do not collect any chat data. All the calculation are done on the browser.
+      </p>
     </div>
 
-    <!-- <div class="card card-small" style="background:#9ecfe078">
-      <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
-    </div>
-    <div class="card card-small" style="background:#f4afbf7a">
-      <span>Pooja : <b>{{poojaMsgs | number}}</b> messages</span>
-    </div>
-    <div class="card card-small">
-      <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
-    </div> -->
-  </div>
-  <div class="widget-container" *ngIf="isDataAnalyzed">
-    <app-pie-chart-msg-comp class="item" [analysisPerAuthor]="analysisPerAuthor"
-      [totalMsgCount]="totalMsgCount">
-    </app-pie-chart-msg-comp>
-    <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
-    <app-emoji-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor">
-    </app-emoji-bar-chart>
-    <app-hourly-msg-cnt-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor"></app-hourly-msg-cnt-bar-chart>
-    <app-week-day-msg-cnt-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor"></app-week-day-msg-cnt-bar-chart>
-  </div>
 
+  </section>
 
-  <div class="container">
-    <button>📁 Choose {{ isDataAnalyzed ? 'Another' : '' }}  Chat File
-      <input type="file" (change)="onFileSelect($event.target.files)" />
-    </button>
-  </div>
+  <section *ngIf="isDataAnalyzed">
+    <div class="container">
+      <button>📁 Choose Another Chat File
+        <input type="file" (change)="onFileSelect($event.target.files)" />
+      </button>
+    </div>
+  </section>
+
+  <section class="instructions" id="howto" *ngIf="!isDataAnalyzed">
+    <h2>How to use WhatsApp Analytics?</h2>
+    <p>
+      In order to use WhatsApp Analytics you need to <b>export your WhatsApp chat</b>
+      Here's a step by step tutorial of how to export your chat:
+    </p>
+    <ol>
+      <li>Go to WhatsApp in your mobile phone and select the desired group or personal chat.
+      </li>
+      <li>Press the context menu (<img src="./assets/menu.png" style="width: 20px; margin: 0 3px;">) in the top right
+        corner..
+      </li>
+      <li>
+        In the context menu, select the <b>"More"</b> item.
+        <img src="./assets/more-options.jpeg" style="max-height: 300px; display: block; margin-top: 10px;">
+      </li>
+      <li>
+        In the new menu, choose <b>"Export Chat"</b>
+        <img src="./assets/export-option.jpeg" style="max-height: 300px; display: block; margin-top: 10px;">
+      </li>
+      <li>
+        You should get a popup where you need to choose between exporting with or without media.
+        Choose the <b>"Without Media"</b> option.
+        <img src="./assets/without-media.jpeg"
+          style="max-height: 150px; display: block; margin-top: 10px; max-width: 100%">
+      </li>
+      <li>Email the exported text file to yourself.
+        <img src="./assets/email.png" style="max-height: 210px; display: block; margin-top: 10px;">
+      </li>
+      <li>Download the chat file to your phone, and select that file to <a>WhatsApp Analytics</a>.</li>
+    </ol>
+  </section>
 </body>
 
 
