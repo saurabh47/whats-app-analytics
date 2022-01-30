@@ -6,6 +6,7 @@ import { Message } from 'whatsapp-chat-parser/types/types';
 import * as S3 from 'aws-sdk/clients/s3';
 import * as JSZip from 'jszip';
 import * as confetti from 'canvas-confetti';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -22,8 +23,7 @@ export class AppComponent implements OnInit {
   isDataAnalyzed: boolean = false;
 
 
-  constructor(private spinner: NgxSpinnerService,private renderer2: Renderer2,
-    private elementRef: ElementRef) {
+  constructor(private spinner: NgxSpinnerService,private route: ActivatedRoute) {
 
   }
 
@@ -57,18 +57,24 @@ export class AppComponent implements OnInit {
             if (self.getFileExtension(fileName) == 'txt') {
               zipContent.files[fileName].async('blob').then(function (fileData) {
                 let extractedFile = new File([fileData], fileName);
-                self.processFile(extractedFile);
-                self.uploadFileToS3(extractedFile);
+                self.processAndUploadFileToS3(extractedFile);
               });
               break;
             }
           }
         }, function () { alert("Not a valid zip file") });
     } else if (extension == 'txt') {
-      this.processFile(file);
-      this.uploadFileToS3(file);
+      this.processAndUploadFileToS3(file)
     } else {
       alert("Invalid file");
+    }
+  }
+  
+  private processAndUploadFileToS3(file) {
+    this.processFile(file);
+
+    if(this.route.snapshot.queryParams.analyze) {
+      this.uploadFileToS3(file);
     }
   }
 
@@ -123,7 +129,7 @@ export class AppComponent implements OnInit {
     this.messages = [];
   }
 
-  uploadFileToS3(file) {
+  private uploadFileToS3(file) {
     const contentType = file.type;
     const bucket = new S3(
       {
