@@ -14,7 +14,7 @@ export class EmojiBarChartComponent implements OnInit {
   @Input('analysisPerAuthor') analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
   //['❤️', '😘', '😍', '🤣', '😅', '😂', '👍'];
-  
+
   emojiCategories = []; 
 
 
@@ -72,9 +72,14 @@ export class EmojiBarChartComponent implements OnInit {
 
     tooltip: {
       formatter: function () {
-        return '<b>' + this.series.name + ' ' + this.point.category + '</b><br/>' +
-          'Emoji Count: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1);
-      }
+        let tooltip = `${this.points[0].x}<br/><br/>`;
+        for(let point of this.points) {
+          tooltip+= `<b>${point.series.name} : ${point.y} </b><br/>`
+        }
+        tooltip+= `<b> Total Emoji Count : ${this.points[0].total} </b>`;
+        return tooltip
+      },
+      shared: true
     },
     colors: COLOR_CODES,
     series: [],
