@@ -298,7 +298,11 @@
   </svg>
   <span>WhatsApp Analytics</span>
   <div class="spacer"></div>
-  <a aria-label="Angular on twitter" target="_blank" rel="noopener" href="https://twitter.com/saurabh47g"
+<a href="#howto">
+  <img src="./assets/question-mark.png" style="height: 42px;">
+</a>
+
+  <!-- <a aria-label="Angular on twitter" target="_blank" rel="noopener" href="https://twitter.com/saurabh47g"
     title="Twitter">
     <svg id="twitter-logo" height="24" data-name="Logo — FIXED" xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 400 400">
@@ -317,7 +321,7 @@
       <path class="cls-2"
         d="M153.62,301.59c94.34,0,145.94-78.16,145.94-145.94,0-2.22,0-4.43-.15-6.63A104.36,104.36,0,0,0,325,122.47a102.38,102.38,0,0,1-29.46,8.07,51.47,51.47,0,0,0,22.55-28.37,102.79,102.79,0,0,1-32.57,12.45,51.34,51.34,0,0,0-87.41,46.78A145.62,145.62,0,0,1,92.4,107.81a51.33,51.33,0,0,0,15.88,68.47A50.91,50.91,0,0,1,85,169.86c0,.21,0,.43,0,.65a51.31,51.31,0,0,0,41.15,50.28,51.21,51.21,0,0,1-23.16.88,51.35,51.35,0,0,0,47.92,35.62,102.92,102.92,0,0,1-63.7,22A104.41,104.41,0,0,1,75,278.55a145.21,145.21,0,0,0,78.62,23" />
     </svg>
-  </a>
+  </a> -->
 </div>
 
 <body class="main-body">
@@ -333,15 +337,6 @@
         <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
       </div>
 
-      <!-- <div class="card card-small" style="background:#9ecfe078">
-        <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
-      </div>
-      <div class="card card-small" style="background:#f4afbf7a">
-        <span>Pooja : <b>{{poojaMsgs | number}}</b> messages</span>
-      </div>
-      <div class="card card-small">
-        <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
-      </div> -->
     </div>
     <div class="widget-container" *ngIf="isDataAnalyzed">
       <app-pie-chart-msg-comp class="item" [analysisPerAuthor]="analysisPerAuthor" [totalMsgCount]="totalMsgCount">
@@ -425,12 +420,6 @@
     </ol>
   </section>
 </body>
-
-
-<!-- <app-pie-chart-msg-comp class="item"></app-pie-chart-msg-comp>
-  <app-daily-chats-anlysis class="item"></app-daily-chats-anlysis>
-  <app-emoji-bar-chart class="item"></app-emoji-bar-chart> -->
-
 
 <footer class="container">
   <div class="card highlight-card card-small">
@@ -629,23 +618,7 @@
       </g>
     </svg>
 
-    <span>WhatsApp Analytics Developed By <b>Saurabh Gangamwar</b></span>
-    <!-- <svg
-      id="rocket-smoke"
-      alt="Rocket Ship Smoke"
-      xmlns="http://www.w3.org/2000/svg"
-      width="516.119"
-      height="1083.632"
-      viewBox="0 0 516.119 1083.632"
-    >
-      <path
-        id="Path_40"
-        data-name="Path 40"
-        d="M644.6,141S143.02,215.537,147.049,870.207s342.774,201.755,342.774,201.755S404.659,847.213,388.815,762.2c-27.116-145.51-11.551-384.124,271.9-609.1C671.15,139.365,644.6,141,644.6,141Z"
-        transform="translate(-147.025 -140.939)"
-        fill="#f5f5f5"
-      />
-    </svg> -->
+    <span>WhatsApp Analytics Developed By <a target="_blank" href="https://twitter.com/saurabh47g">Saurabh Gangamwar</a></span>
 
   </div>
 </footer>
