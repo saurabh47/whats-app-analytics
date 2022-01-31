@@ -38,7 +38,6 @@
 
   .toolbar {
     height: 60px;
-    margin: -8px;
     display: flex;
     align-items: center;
     background-color: #00bfa5;
@@ -272,75 +271,120 @@
 </style>
 
 <!-- Toolbar -->
-<ngx-spinner size="medium" type="ball-spin-clockwise"></ngx-spinner>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-climbing-dot" [fullScreen]="true">
+  <p style="color: white"> Loading... </p>
+</ngx-spinner>
 
 <div class="toolbar" role="banner">
-  <svg style="margin: 0 15px;" enable-background="new 0 0 512.033 512.033" height="35" viewBox="0 0 512.033 512.033"
-    width="35" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="m489.17 412.107c8.22-18.37 12.83-38.67 12.83-60.09 0-82.71-67.29-150-150-150-17.85 0-34.99 3.14-50.89 8.89l-90.22 90.22c-5.75 15.9-8.89 33.04-8.89 50.89 0 82.71 67.29 150 150 150h150l-.53-.63c-20.78-24.94-25.55-59.64-12.3-89.28z"
-      fill="#bfdbff" />
-    <path
-      d="m310 160.017c0 82.364-66.956 150-150 150h-150l.53-.63c20.78-24.94 25.55-59.64 12.3-89.28-8.22-18.37-12.83-38.67-12.83-60.09 0-82.71 67.29-150 150-150s150 67.29 150 150z"
-      fill="#ecf2f3" />
-    <path d="m190 160.017h60v60h-60z" fill="#ffcd69" />
-    <path d="m190 220.017h-60c0-6.925 0-143.1 0-150h60z" fill="#ff7b79" />
-    <path d="m70 130.017h60v90h-60z" fill="#bfdbff" />
-    <circle cx="412" cy="352.017" r="10" />
-    <circle cx="352" cy="352.017" r="10" />
-    <circle cx="292" cy="352.017" r="10" />
-    <path
-      d="m190 60.017h-60c-5.522 0-10 4.477-10 10v50h-50c-5.522 0-10 4.477-10 10v90c0 5.523 4.478 10 10 10h180c5.522 0 10-4.477 10-10v-60c0-5.523-4.478-10-10-10h-50v-80c0-5.523-4.477-10-10-10zm-110 80h40v70h-40zm60-60h40v130h-40zm100 90v40h-40v-40z" />
-    <circle cx="160" cy="10.017" r="10" />
-    <path
-      d="m2.88 302.946-.53.63c-2.505 2.976-3.057 7.133-1.416 10.659s5.177 5.781 9.066 5.781h150c12.255 0 24.343-1.388 36.122-4.119-2.733 11.791-4.122 23.877-4.122 36.119 0 88.224 71.775 160 160 160h150c3.89 0 7.426-2.255 9.066-5.781 2.975-6.395-1.863-11.139-1.914-11.25-18.217-21.865-22.478-52.795-10.854-78.794 9.092-20.319 13.702-41.911 13.702-64.174 0-88.224-71.775-160-160-160-12.241 0-24.327 1.389-36.119 4.122 2.731-11.781 4.119-23.868 4.119-36.122 0-71.892-47.581-132.597-112.531-152.812-5.273-1.64-10.879 1.303-12.52 6.577-1.642 5.273 1.303 10.878 6.576 12.52 58.901 18.332 98.475 72.068 98.475 133.715 0 77.366-62.743 140-140 140h-131.165c13.728-25.654 15.221-56.932 3.123-83.995-7.934-17.732-11.958-36.576-11.958-56.005 0-61.647 39.574-115.383 98.475-133.715 5.273-1.642 8.218-7.247 6.576-12.52-1.641-5.273-7.246-8.214-12.52-6.577-64.849 20.184-112.531 80.815-112.531 152.812 0 22.264 4.61 43.855 13.701 64.171 11.624 26.002 7.364 56.933-10.821 78.758zm305.91-84.096c13.924-4.531 28.437-6.833 43.21-6.833 77.196 0 140 62.804 140 140 0 19.43-4.023 38.273-11.959 56.009-12.094 27.052-10.604 58.32 3.13 83.991h-131.171c-77.196 0-140-62.804-140-140 0-14.775 2.302-29.288 6.833-43.212 41.227-16.32 73.639-48.733 89.957-89.955z" />
-  </svg>
-  <span>WhatsApp Analytics</span>
+
+  <img src="./assets/icon.svg" style="margin: 0 15px;">
+
+  <a style="color: white;" routerLink="/" queryParamsHandling="preserve">WhatsApp Analytics</a>
   <div class="spacer"></div>
-  <a aria-label="Angular on twitter" target="_blank" rel="noopener" href="https://twitter.com/saurabh47g"
-    title="Twitter">
-    <svg id="twitter-logo" height="24" data-name="Logo — FIXED" xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 400 400">
-      <defs>
-        <style>
-          .cls-1 {
-            fill: none;
-          }
+  <div (click)="onScrollTo('howto')" *ngIf="!isDataAnalyzed">
+    <img src="./assets/question-mark.png" style="height: 42px;">
+  </div>
 
-          .cls-2 {
-            fill: #ffffff;
-          }
-        </style>
-      </defs>
-      <rect class="cls-1" width="400" height="400" />
-      <path class="cls-2"
-        d="M153.62,301.59c94.34,0,145.94-78.16,145.94-145.94,0-2.22,0-4.43-.15-6.63A104.36,104.36,0,0,0,325,122.47a102.38,102.38,0,0,1-29.46,8.07,51.47,51.47,0,0,0,22.55-28.37,102.79,102.79,0,0,1-32.57,12.45,51.34,51.34,0,0,0-87.41,46.78A145.62,145.62,0,0,1,92.4,107.81a51.33,51.33,0,0,0,15.88,68.47A50.91,50.91,0,0,1,85,169.86c0,.21,0,.43,0,.65a51.31,51.31,0,0,0,41.15,50.28,51.21,51.21,0,0,1-23.16.88,51.35,51.35,0,0,0,47.92,35.62,102.92,102.92,0,0,1-63.7,22A104.41,104.41,0,0,1,75,278.55a145.21,145.21,0,0,0,78.62,23" />
-    </svg>
-  </a>
-</div>
-<div class="card-container">
-  <div class="card card-small" style="background:#9ecfe078">
-    <span>Saurabh : <b>{{saurabhMsgs | number}}</b> messages</span>
-  </div>
-  <div class="card card-small" style="background:#f4afbf7a">
-    <span>Pooja : <b>{{poojaMsgs | number}}</b> messages</span>
-  </div>
-  <div class="card card-small">
-    <span>Total : <b>{{totalMsgs | number }}</b> messages</span>
-  </div>
-</div>
-<!-- <app-pie-chart-msg-comp class="item"></app-pie-chart-msg-comp>
-  <app-daily-chats-anlysis class="item"></app-daily-chats-anlysis>
-  <app-emoji-bar-chart class="item"></app-emoji-bar-chart> -->
-
-<div class="widget-container">
-  <app-pie-chart-msg-comp class="item"></app-pie-chart-msg-comp>
-  <app-daily-chats-anlysis class="item"></app-daily-chats-anlysis>
-  <app-emoji-bar-chart class="item"></app-emoji-bar-chart>
 </div>
 
-<div class="content" role="main">
-  <!-- Highlight Card -->
+<body class="main-body">
+  <section class="visulizations-container" *ngIf="isDataAnalyzed">
+    <div class="card-container">
+
+      <div class="card card-small" *ngFor="let analysis of analysisPerAuthor | keyvalue; let idx = index"
+        [style.background]="getColorCode(idx)">
+        <span>{{ analysis.value.author }} : <b>{{ analysis.value.messageCount | number}}</b> messages</span>
+      </div>
+
+      <div class="card card-small">
+        <span>Total : <b>{{totalMsgCount | number }}</b> messages</span>
+      </div>
+
+    </div>
+    <div class="widget-container" *ngIf="isDataAnalyzed">
+      <app-pie-chart-msg-comp class="item" [analysisPerAuthor]="analysisPerAuthor" [totalMsgCount]="totalMsgCount">
+      </app-pie-chart-msg-comp>
+      <app-daily-chats-anlysis class="item" [messages]="messages"></app-daily-chats-anlysis>
+      <app-emoji-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor">
+      </app-emoji-bar-chart>
+      <app-hourly-msg-cnt-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor"></app-hourly-msg-cnt-bar-chart>
+      <app-week-day-msg-cnt-bar-chart class="item" [analysisPerAuthor]="analysisPerAuthor">
+      </app-week-day-msg-cnt-bar-chart>
+    </div>
+  </section>
+
+
+  <section id="preview" class="main-container" *ngIf="!isDataAnalyzed">
+    <div class="container" style="margin-top: 20px;">
+      <img src="./assets/icon.svg" style="margin-right: 10px;">
+      <h1 style="font-size: 40px;">WhatsApp Analytics</h1>
+    </div>
+    <div class="preview_wrapper" style="margin-top: 25px;">
+      <img class="preview-img" src="./assets/preview-new.png">
+      <p class="main-message">
+        📊 Visualize your WhatsApp Chats !<br><br>
+
+        Find Some Interesting Patterns ❤
+      </p>
+    </div>
+
+    <div class="container" style="margin-top: 40px;">
+      <button>📁 Choose {{ isDataAnalyzed ? 'Another' : '' }} Chat File
+        <input type="file" (change)="onFileSelect($event.target.files)" />
+      </button>
+    </div>
+    <div class="container">
+      <p style="text-align: center;width: 100%;">
+        <b>Note</b> We do not collect any chat data. All the calculation are done on the browser.
+      </p>
+    </div>
+
+
+  </section>
+
+  <section *ngIf="isDataAnalyzed">
+    <div class="container">
+      <button>📁 Choose Another Chat File
+        <input type="file" (change)="onFileSelect($event.target.files)" />
+      </button>
+    </div>
+  </section>
+
+  <section class="instructions" id="howto" *ngIf="!isDataAnalyzed">
+    <h2>How to use WhatsApp Analytics?</h2>
+    <p>
+      In order to use WhatsApp Analytics you need to <b>export your WhatsApp chat</b>
+      Here's a step by step tutorial of how to export your chat:
+    </p>
+    <ol>
+      <li>Go to WhatsApp in your mobile phone and select the desired group or personal chat.
+      </li>
+      <li>Press the context menu (<img src="./assets/menu.png" style="width: 20px; margin: 0 3px;">) in the top right
+        corner..
+      </li>
+      <li>
+        In the context menu, select the <b>"More"</b> item.
+        <img src="./assets/more-options.jpeg" style="max-height: 300px; display: block; margin-top: 10px;">
+      </li>
+      <li>
+        In the new menu, choose <b>"Export Chat"</b>
+        <img src="./assets/export-option.jpeg" style="max-height: 300px; display: block; margin-top: 10px;">
+      </li>
+      <li>
+        You should get a popup where you need to choose between exporting with or without media.
+        Choose the <b>"Without Media"</b> option.
+        <img src="./assets/without-media.jpeg"
+          style="max-height: 150px; display: block; margin-top: 10px; max-width: 100%">
+      </li>
+      <li>Email the exported text file to yourself.
+        <img src="./assets/email.png" style="max-height: 210px; display: block; margin-top: 10px;">
+      </li>
+      <li>Download the chat file to your phone, and select that file to <a>WhatsApp Analytics</a>.</li>
+    </ol>
+  </section>
+</body>
+
+<footer class="container">
   <div class="card highlight-card card-small">
     <svg id="rocket-smoke" style="width:60px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.07 512.07" xml:space="preserve">
@@ -537,74 +581,9 @@
       </g>
     </svg>
 
-    <span>WhatsApp Analytics Developed By <b>Saurabh Gangamwar</b></span>
-
-    <!-- <svg
-      id="rocket-smoke"
-      alt="Rocket Ship Smoke"
-      xmlns="http://www.w3.org/2000/svg"
-      width="516.119"
-      height="1083.632"
-      viewBox="0 0 516.119 1083.632"
-    >
-      <path
-        id="Path_40"
-        data-name="Path 40"
-        d="M644.6,141S143.02,215.537,147.049,870.207s342.774,201.755,342.774,201.755S404.659,847.213,388.815,762.2c-27.116-145.51-11.551-384.124,271.9-609.1C671.15,139.365,644.6,141,644.6,141Z"
-        transform="translate(-147.025 -140.939)"
-        fill="#f5f5f5"
-      />
-    </svg> -->
+    <span>WhatsApp Analytics Developed By <a target="_blank" href="https://twitter.com/saurabh47g">Saurabh
+        Gangamwar</a></span>
 
   </div>
-
-
-
-  <!-- Footer -->
-  <!-- <footer>
-    Love Angular?&nbsp;
-    <a href="https://github.com/angular/angular" target="_blank" rel="noopener">
-      Give our repo a star.
-      <div class="github-star-badge">
-        <svg
-          class="material-icons"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-          />
-        </svg>
-        Star
-      </div>
-    </a>
-    <a href="https://github.com/angular/angular" target="_blank" rel="noopener">
-      <svg
-        class="material-icons"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
-          fill="#1976d2"
-        />
-        <path d="M0 0h24v24H0z" fill="none" />
-      </svg>
-    </a>
-  </footer> -->
-</div>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
+</footer>
 <router-outlet></router-outlet>

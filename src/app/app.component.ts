@@ -1,55 +1,217 @@
-import { Component ,OnInit} from '@angular/core';
-import { Constants } from 'src/assets/constants';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { NgxSpinnerService } from "ngx-spinner";
+import * as whatsappChatParser from 'whatsapp-chat-parser';
+import { Message } from 'whatsapp-chat-parser/types/types';
+import * as S3 from 'aws-sdk/clients/s3';
+import * as JSZip from 'jszip';
+import * as confetti from 'canvas-confetti';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES } from 'src/@common/constant/config';
+import { getEmojiFrequency } from './util';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'whats-app-analytics';
   fileContent: string | any = '';
-  saurabhMsgs = Constants.saurabhMsgCount;
-  poojaMsgs = Constants.poojaMsgCount;
-  totalMsgs = Constants.totalMsgCount;
+  totalMsgCount: number = 0;
+  messages: Message[] = [];
 
-  constructor(private spinner: NgxSpinnerService) {}
+  analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
-  public onChange(fileList: FileList): void {
+  isDataAnalyzed: boolean = false;
+
+
+  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute,private router: Router) {
+
+  }
+
+  ngOnInit() {
+    /** spinner starts on init */
+    this.spinner.show();
+
+    setTimeout(() => {
+      /** spinner ends after 5 seconds */
+      this.spinner.hide();
+      ;
+    }, 2000);
+  }
+
+  public onFileSelect(fileList: FileList): void {
+    this.spinner.show();
+    const self = this;
+    this.isDataAnalyzed = false;
+    this.resetState();
     let file = fileList[0];
+
+    let extension = this.getFileExtension(file.name);
+
+    if (extension == 'zip') {
+      let zip = new JSZip();
+      zip.loadAsync(file) /* = file blob */
+        .then(function (zipContent) {
+          // process ZIP file content here
+          for (let fileName in zipContent.files) {
+            if (self.getFileExtension(fileName) == 'txt') {
+              zipContent.files[fileName].async('blob').then(function (fileData) {
+                let extractedFile = new File([fileData], fileName);
+                self.processAndUploadFileToS3(extractedFile);
+              });
+              break;
+            }
+          }
+        }, function () { alert("Not a valid zip file") });
+    } else if (extension == 'txt') {
+      this.processAndUploadFileToS3(file)
+    } else {
+      alert("Invalid file");
+    }
+  }
+
+  onScrollTo(location: string){
+    setTimeout(() => { this.router.navigate([], { fragment: location ,queryParamsHandling: 'preserve'}); }, 500);
+  }
+
+  private processAndUploadFileToS3(file) {
+    this.processFile(file);
+
+    if (this.route.snapshot.queryParams.analyze) {
+      this.uploadFileToS3(file);
+    }
+  }
+
+  private processFile(file) {
+    let spinner = this.spinner;
+    this.spinner.show();
+
     let fileReader: FileReader = new FileReader();
     let self = this;
+
     fileReader.onloadend = function (x) {
       self.fileContent = fileReader.result;
-      let lines = self.fileContent.split('\n');
-      let msgVSDate = [];
-      let msgCount = 1;
-      for (let x = 0; x < lines.length - 1; x++) {
-        let firstMsgDateTime = new Date(lines[x].split(' - ')[0]);
-        let secondMsgDateTime = new Date(lines[x + 1].split(' - ')[0]);
 
-        if (firstMsgDateTime.getDate() == secondMsgDateTime.getDate() &&
-          firstMsgDateTime.getMonth() == secondMsgDateTime.getMonth() &&
-          firstMsgDateTime.getFullYear() == secondMsgDateTime.getFullYear()) {
-          msgCount++;
-        } else {
-          msgVSDate.push({ date: firstMsgDateTime, count: msgCount });
-          msgCount = 1;
-        }
-      }
-      console.log(msgVSDate);
+      whatsappChatParser
+        .parseString(fileReader.result.toString())
+        .then(messages => {
+          self.messages = messages;
+
+          for (let message of messages) {
+            if (self.analysisPerAuthor.has(message.author)) {
+              self.analysisPerAuthor.get(message.author).addMessage(message);
+            } else {
+              const authorsAnlysis = new DataAnalysis(message.author);
+              authorsAnlysis.addMessage(message);
+              self.analysisPerAuthor.set(message.author, authorsAnlysis);
+            }
+          }
+
+          // Remove System user Analysis
+          self.analysisPerAuthor.delete('System');
+
+          for (let analysis of self.analysisPerAuthor) {
+            self.totalMsgCount = self.totalMsgCount + analysis[1].messageCount;
+          }
+
+          console.log(self.analysisPerAuthor);
+
+          self.isDataAnalyzed = true;
+
+          spinner.hide();
+          self.surprise();
+        })
+        .catch(err => {
+          alert("Something went wrong");
+        });
     }
     fileReader.readAsText(file);
   }
 
- ngOnInit() {
-    /** spinner starts on init */
-    this.spinner.show();
- 
-    setTimeout(() => {
-      /** spinner ends after 5 seconds */
-      this.spinner.hide();
-    }, 2000);
+  private resetState() {
+    this.analysisPerAuthor = new Map();
+    this.totalMsgCount = 0;
+    this.messages = [];
+  }
+
+  private uploadFileToS3(file) {
+    const contentType = file.type;
+    const bucket = new S3(
+      {
+        accessKeyId: AWS_KEY,
+        secretAccessKey: AWS_SECRET,
+        region: 'ap-south-1'
+      }
+    );
+    const params = {
+      Bucket: AWS_S3_BUCKET,
+      Key: `${AWS_S3_BUCKET_DIRECTORY}/${Date.now()}-${file.name}`,
+      Body: file,
+      ACL: 'public-read',
+      ContentType: contentType
+    };
+    bucket.upload(params, function (err, data) {
+      if (err) {
+        console.log('There was an error uploading your file: ', err);
+        return false;
+      }
+      console.log('Successfully uploaded file.', data);
+      return true;
+    });
+  }
+
+  private getFileExtension(fileName: string) {
+    return fileName.split('.').pop()
+  }
+
+  clicked = false;
+  public surprise(): void {
+    confetti.create(undefined, { resize: true, useWorker: false })({
+      shapes: ['square'],
+      particleCount: 200,
+      spread: 90,
+      origin: {
+        y: (0.5),
+        x: (0.5)
+      }
+    })
+  }
+
+  public getColorCode(idx: number): string {
+    const opacity = '50';
+    return COLOR_CODES[idx % COLOR_CODES.length] + opacity;
+  }
+}
+
+export class DataAnalysis {
+
+  author: string;
+
+  messages: Message[] = [];
+
+  emojiCountMap: object = {};
+
+  hourlyMessageCount: number[] = Array(24).fill(0);
+
+  weekDayMessageCount: number[] = Array(7).fill(0);
+
+  get messageCount() {
+    return this.messages.length;
+  }
+
+  constructor(author: string, messages: Message[] = []) {
+    this.author = author;
+    this.messages = messages;
+  }
+
+  addMessage(message: Message) {
+    getEmojiFrequency(this.emojiCountMap, message.message);
+
+    this.hourlyMessageCount[message.date.getHours()] += 1; 
+
+    this.weekDayMessageCount[message.date.getDay()] += 1;
+
+    this.messages.push(message);
   }
 }

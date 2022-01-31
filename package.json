@@ -1,10 +1,11 @@
 {
   "name": "whats-app-analytics",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod",
+    "serve-prod": "ng serve --prod --optimization=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -19,11 +20,15 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "aws-sdk": "^2.1065.0",
+    "canvas-confetti": "^1.4.0",
     "highcharts": "^8.0.3",
     "highcharts-angular": "^2.4.0",
-    "ngx-spinner": "^9.0.1",
+    "jszip": "^3.7.1",
+    "ngx-spinner": "^8.1.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
+    "whatsapp-chat-parser": "^3.2.1",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
@@ -31,9 +36,9 @@
     "@angular/cli": "~8.3.24",
     "@angular/compiler-cli": "~8.2.14",
     "@angular/language-service": "~8.2.14",
-    "@types/node": "~8.9.4",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^8.9.5",
     "codelyzer": "^5.0.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",

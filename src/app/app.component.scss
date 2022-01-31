@@ -1,19 +1,160 @@
+$file-chooser-btn-width: 300px;
+
 .widget-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
   .item {
-    margin-top:10px;
-    display:flex;
-    justify-content:center;
-    width:50%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    width: 50%;
   }
 }
 @media screen and (max-width: 867px) {
   .widget-container {
-    .item{
-      width:100%;
+    .item {
+      width: 100%;
     }
+  }
+
+  
+  h1{
+    font-size: 32px !important;
+  }
+
+  #preview .preview_wrapper {
+    flex-direction: column;
+
+    .main-message {
+      margin-top: 20px;
+      margin-left: 0px;
+      max-width: 100%;
+    }
+
+    img {
+      width: 100%;
+    }
+
+  }
+
+  .instructions{
+    max-width: 90% !important;
+    padding: 0 5px !important;
+  }
+}
+
+button {
+  position: relative;
+  border: none;
+  padding: 0.5rem;
+  background: #fddde3;
+  color: #8e5d5d;
+  width: $file-chooser-btn-width;
+  height: 50px;
+  font-size: 21px;
+  box-shadow: 0px 1px 4px 0px #d59d9d;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+
+  cursor: pointer;
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+input[type="file"] {
+  font-size: 100px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  width: $file-chooser-btn-width;
+}
+
+.main-body {
+  min-height: calc(100vh - 150px);
+}
+
+.instructions {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+section h2 {
+  color: #111;
+  font-weight: 300;
+  text-align: center;
+  margin: 0 0 40px;
+  font-size: 24px;
+}
+
+#howto p {
+  color: #656565;
+  font-size: 14px;
+  line-height: 20px;
+}
+#howto li {
+  margin: 0 0 20px;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+#howto li img {
+  display: inline-block;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+}
+
+.main-container {
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  background: url('../assets/memphis-colorful.png');
+  min-height: calc(100vh - 60px);
+  margin-bottom: 20px;
+
+  .main-message{
+    margin-left: 20px;
+    text-shadow: none;
+    letter-spacing: 0.015em;
+    font-size: 21px;
+    line-height: 24px;
+    text-align: left;
+    max-width: 300px;
+    font-weight: 500;
+  }
+}
+
+#preview .preview_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+
+  .preview-img {
+    max-height: 280px;
+    max-width: 80vw;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%)
+  }
+}
+
+footer {
+  color: white;
+  a {
+    color: white;
+    text-decoration: underline;
   }
 }

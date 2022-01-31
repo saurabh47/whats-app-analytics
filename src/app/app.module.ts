@@ -9,13 +9,17 @@ import { PieChartMsgCompComponent } from './pie-chart-msg-comp/pie-chart-msg-com
 import { EmojiBarChartComponent } from './emoji-bar-chart/emoji-bar-chart.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HourlyMsgCntBarChartComponent } from './hourly-msg-cnt-bar-chart/hourly-msg-cnt-bar-chart.component';
+import { WeekDayMsgCntBarChartComponent } from './week-day-msg-cnt-bar-chart/week-day-msg-cnt-bar-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DailyChatsAnlysisComponent,
     PieChartMsgCompComponent,
-    EmojiBarChartComponent
+    EmojiBarChartComponent,
+    HourlyMsgCntBarChartComponent,
+    WeekDayMsgCntBarChartComponent
   ],
   imports: [
     BrowserModule,

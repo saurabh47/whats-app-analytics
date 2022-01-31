@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts/highcharts.src.js';
-import { Constants } from 'src/assets/constants';
 
 @Component({
   selector: 'app-daily-chats-anlysis',
@@ -8,16 +7,19 @@ import { Constants } from 'src/assets/constants';
   styleUrls: ['./daily-chats-anlysis.component.scss']
 })
 export class DailyChatsAnlysisComponent implements OnInit {
+
+  @Input('messages') messages: any[] = [];
+
   updateFlag = true;
   Highcharts = Highcharts;
   chartConstructor = 'chart';
   data = [];
   chartCallback = (chart) => {
-      setTimeout(() => {
-        console.log('Reflowing Pie Chart');
-        chart.reflow();
-      }, 0);
-    };
+    setTimeout(() => {
+      console.log('Reflowing Pie Chart');
+      chart.reflow();
+    }, 0);
+  };
 
   lineChartOptions = {
 
@@ -27,7 +29,7 @@ export class DailyChatsAnlysisComponent implements OnInit {
     },
 
     title: {
-      text: 'Messages between 5 Aug 2018 - 5 March 2020'
+      text: 'Messages Per Day'
     },
 
 
@@ -60,7 +62,29 @@ export class DailyChatsAnlysisComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.lineChartOptions.series[0].data = Constants.msgVsDate;
+    let msgVSDate = [];
+    let msgCount = 1;
+    for (let x = 0; x < this.messages.length - 1; x++) {
+      var firstMsgDateTime = this.messages[x].date;
+      var secondMsgDateTime = this.messages[x + 1].date;
+      if (firstMsgDateTime.toUTCString() == 'Invalid Date' || secondMsgDateTime.toUTCString() == 'Invalid Date') {
+        continue;
+      }
+      else if (firstMsgDateTime.getDate() == secondMsgDateTime.getDate() &&
+        firstMsgDateTime.getMonth() == secondMsgDateTime.getMonth() &&
+        firstMsgDateTime.getFullYear() == secondMsgDateTime.getFullYear()) {
+        msgCount++;
+      } else {
+        msgVSDate.push([Date.UTC(firstMsgDateTime.getFullYear(), firstMsgDateTime.getMonth(), firstMsgDateTime.getDate()), msgCount]);
+        msgCount = 1;
+      }
+    }
+    msgVSDate.push([Date.UTC(firstMsgDateTime.getFullYear(), firstMsgDateTime.getMonth(), firstMsgDateTime.getDate()), msgCount]);
+
+    this.lineChartOptions.series[0].data = msgVSDate;
+    localStorage.setItem('data', JSON.stringify(msgVSDate));
+    this.updateFlag = true;
+
   }
 
 
@@ -79,7 +103,7 @@ export class DailyChatsAnlysisComponent implements OnInit {
       for (let x = 0; x < lines.length - 1; x++) {
         let firstMsgDateTime = new Date(lines[x].split(' - ')[0]);
         let secondMsgDateTime = new Date(lines[x + 1].split(' - ')[0]);
-        if(firstMsgDateTime.toUTCString() == 'Invalid Date' || secondMsgDateTime.toUTCString() == 'Invalid Date'  ){
+        if (firstMsgDateTime.toUTCString() == 'Invalid Date' || secondMsgDateTime.toUTCString() == 'Invalid Date') {
           continue;
         }
         else if (firstMsgDateTime.getDate() == secondMsgDateTime.getDate() &&
@@ -87,12 +111,12 @@ export class DailyChatsAnlysisComponent implements OnInit {
           firstMsgDateTime.getFullYear() == secondMsgDateTime.getFullYear()) {
           msgCount++;
         } else {
-          msgVSDate.push([Date.UTC(firstMsgDateTime.getFullYear(),firstMsgDateTime.getMonth(),firstMsgDateTime.getDate()), msgCount]);
+          msgVSDate.push([Date.UTC(firstMsgDateTime.getFullYear(), firstMsgDateTime.getMonth(), firstMsgDateTime.getDate()), msgCount]);
           msgCount = 1;
         }
       }
       self.lineChartOptions.series[0].data = msgVSDate;
-      localStorage.setItem('data',JSON.stringify(msgVSDate));
+      localStorage.setItem('data', JSON.stringify(msgVSDate));
       self.updateFlag = true;
     }
     fileReader.readAsText(file);
