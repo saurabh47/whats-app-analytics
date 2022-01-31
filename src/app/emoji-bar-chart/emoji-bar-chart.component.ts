@@ -13,7 +13,9 @@ export class EmojiBarChartComponent implements OnInit {
 
   @Input('analysisPerAuthor') analysisPerAuthor: Map<String, DataAnalysis> = new Map();
 
-  emojiCategories = ['❤️', '😘', '😍', '🤣', '😅', '😂', '👍'];
+  //['❤️', '😘', '😍', '🤣', '😅', '😂', '👍'];
+  
+  emojiCategories = []; 
 
 
   updateFlag = true;
@@ -41,13 +43,13 @@ export class EmojiBarChartComponent implements OnInit {
         valueDescriptionFormat: '{index}. Age {xDescription}, {value}%.'
       }
     },
-    xAxis: [{
+    xAxis: {
       categories: this.emojiCategories,
       reversed: false,
       labels: {
         step: 1
       },
-    }],
+    },
     yAxis: {
       title: {
         text: "No. of emoji's"
@@ -86,6 +88,25 @@ export class EmojiBarChartComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    const totalEmojisCntMap: Map<string,number> = new Map();
+
+    for (let analysis of this.analysisPerAuthor) { 
+      for(let emoji in analysis[1].emojiCountMap){
+        totalEmojisCntMap.set(emoji,(totalEmojisCntMap.get(emoji) || 0 ) +  analysis[1].emojiCountMap[emoji])
+      }
+    }
+
+    totalEmojisCntMap.delete("🏻"); // Remove invalid emoji
+    // get top 7 emojis used
+    const topEmojis = [...totalEmojisCntMap.entries()].sort((a, b) => b[1] - a[1]).map(kv => kv[0]).slice(0,7);
+
+    this.emojiCategories = topEmojis;
+
+    this.chartOptions.xAxis.categories = this.emojiCategories;
+
+    console.log(topEmojis)
+
     for (let analysis of this.analysisPerAuthor) {
       const emojiCountPerUser = [];
       for (let emoji of this.emojiCategories) {

@@ -208,7 +208,6 @@ export class DataAnalysis {
   addMessage(message: Message) {
     getEmojiFrequency(this.emojiCountMap, message.message);
 
-    console.log(message.message, message.date.getHours());
     this.hourlyMessageCount[message.date.getHours()] += 1; 
 
     this.weekDayMessageCount[message.date.getDay()] += 1;
