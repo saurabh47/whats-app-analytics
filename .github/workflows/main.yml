@@ -33,11 +33,6 @@ jobs:
         with:
              name: build
              path: dist
-      - name: Push Build to Releases
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "dist/**"
-          token: ${{ secrets.WHATSAPP_ANALYTICS_GITHUB_TOKEN }}
       - name: Deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
