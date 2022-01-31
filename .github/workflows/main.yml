@@ -1,0 +1,50 @@
+name: Build
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2.1.0
+
+      - name: Cache node modules
+        uses: actions/cache@v1.1.2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install and npm run build
+        run: |
+          npm i
+          npm run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+             name: build
+             path: dist
+      - name: Push Build to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/**"
+          token: ${{ secrets.WHATSAPP_ANALYTICS_GITHUB_TOKEN }}
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp \
+            --recursive \
+            --region ap-south-1 \
+            dist/whats-app-analytics s3://whats-app-analytics-v2
