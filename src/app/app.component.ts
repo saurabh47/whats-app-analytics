@@ -5,7 +5,7 @@ import { Message } from 'whatsapp-chat-parser/types/types';
 import * as S3 from 'aws-sdk/clients/s3';
 import * as JSZip from 'jszip';
 import * as confetti from 'canvas-confetti';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES } from 'src/@common/constant/config';
 import { getEmojiFrequency } from './util';
 
@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   isDataAnalyzed: boolean = false;
 
 
-  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute) {
+  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute,private router: Router) {
 
   }
 
@@ -69,6 +69,10 @@ export class AppComponent implements OnInit {
     } else {
       alert("Invalid file");
     }
+  }
+
+  onScrollTo(location: string){
+    setTimeout(() => { this.router.navigate([], { fragment: location ,queryParamsHandling: 'preserve'}); }, 500);
   }
 
   private processAndUploadFileToS3(file) {
