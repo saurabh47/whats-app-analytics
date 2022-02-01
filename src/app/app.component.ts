@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    const demoAppURL = `${window.location.protocol}//${window.location.host}/${window.location.pathname}?showDemo=true`;
+    const demoAppURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?showDemo=true`;
 
     this.sanitizedDemoURL = this.sanitizer.bypassSecurityTrustResourceUrl(demoAppURL);
 
