@@ -222,43 +222,11 @@ footer {
   transform: rotate(-45deg);
 }
 
-// .button {
-//   background-color: #4caf50; /* Green */
-//   border: none;
-//   color: white;
-//   padding: 16px 28px;
-//   text-align: center;
-//   text-decoration: none;
-//   display: inline-block;
-//   font-size: 18px;
-//   margin: 4px 2px;
-//   transition-duration: 0.4s;
-//   width: fit-content;
-//   border-radius: 8px;
-//   cursor: pointer;
-// }
-
 .demo-container {
   position: relative;
 }
 
-// .demo-button {
-//   position: absolute;
-//   left: 50%;
-//   bottom: 0%;
-//   transform: translate(-50%, -50%);
-//   -ms-transform: translate(-50%, -50%);
-//   background-color: white;
-//   color: black;
-//   border: 2px solid #555555;
-// }
-
-// .demo-button:hover {
-//   background-color: #555555;
-//   color: white;
-// }
-
-$color: rgb(34, 34, 34);
+$demo-btn-color: rgb(34, 34, 34);
 
 .demo-button-wrapper {
   position: absolute;
@@ -266,10 +234,6 @@ $color: rgb(34, 34, 34);
   bottom: 0%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  
-  // margin: 0 auto;
-  // left: 0;
-  // right: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -281,19 +245,16 @@ $color: rgb(34, 34, 34);
     background: transparent;
     cursor: pointer;
     border: 1px solid white;
-    color: $color;
+    color: $demo-btn-color;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    // border-radius: 100%;
-    // text-transform: uppercase;
     font-family: "Muli-LightItalic", Helvetica;
     font-size: 16px;
     line-height: 20px;
     animation: ripple 1.5s linear infinite;
     transition: all 0.7s ease;
-    
 
     &:hover {
       transform: scale(1.1);
@@ -306,11 +267,18 @@ $color: rgb(34, 34, 34);
 
 @keyframes ripple {
   0% {
-    box-shadow: 0 0 0 0 rgba($color, 0.3), 0 0 0 1px rgba($color, 0.3), 0 0 0 3px rgba($color, 0.3),
-      0 0 0 5px rgba($color, 0.3);
+    box-shadow: 0 0 0 0 rgba($demo-btn-color, 0.3), 0 0 0 1px rgba($demo-btn-color, 0.3),
+      0 0 0 3px rgba($demo-btn-color, 0.3), 0 0 0 5px rgba($demo-btn-color, 0.3);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba($color, 0.3), 0 0 0 4px rgba($color, 0.3), 0 0 0 10px rgba($color, 0),
-      0 0 0 5px rgba($color, 0);
+    box-shadow: 0 0 0 0 rgba($demo-btn-color, 0.3), 0 0 0 4px rgba($demo-btn-color, 0.3),
+      0 0 0 10px rgba($demo-btn-color, 0), 0 0 0 5px rgba($demo-btn-color, 0);
   }
+}
+
+.note-txt {
+  text-align: center;
+  width: 100%;
+  max-width: 90% !important;
+  padding: 0 5px !important;
 }
