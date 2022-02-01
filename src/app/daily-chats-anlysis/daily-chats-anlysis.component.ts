@@ -31,11 +31,6 @@ export class DailyChatsAnlysisComponent implements OnInit {
     title: {
       text: 'Messages Per Day'
     },
-
-
-    tooltip: {
-      valueDecimals: 2
-    },
     yAxis: {
       title: {
         text: 'No. of messages'

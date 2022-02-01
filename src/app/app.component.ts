@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { NgxSpinnerService } from "ngx-spinner";
 import * as whatsappChatParser from 'whatsapp-chat-parser';
 import { Message } from 'whatsapp-chat-parser/types/types';
@@ -6,15 +6,19 @@ import * as S3 from 'aws-sdk/clients/s3';
 import * as JSZip from 'jszip';
 import * as confetti from 'canvas-confetti';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES } from 'src/@common/constant/config';
+import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES, DEMO_APP_URL } from 'src/@common/constant/config';
 import { getEmojiFrequency } from './util';
+import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'whats-app-analytics';
   fileContent: string | any = '';
   totalMsgCount: number = 0;
@@ -24,20 +28,38 @@ export class AppComponent implements OnInit {
 
   isDataAnalyzed: boolean = false;
 
+  showDemoModal = false;
 
-  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute,private router: Router) {
+  sanitizedDemoURL;
+
+  queryParamSubscription: Subscription;
+
+  isDemoApp = false;
+
+  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute, private router: Router,
+    private sanitizer: DomSanitizer, private httpClient: HttpClient) {
 
   }
 
-  ngOnInit() {
-    /** spinner starts on init */
-    this.spinner.show();
 
-    setTimeout(() => {
-      /** spinner ends after 5 seconds */
-      this.spinner.hide();
-      ;
-    }, 2000);
+  ngOnInit() {
+    const demoAppURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?showDemo=true`;
+
+    this.sanitizedDemoURL = this.sanitizer.bypassSecurityTrustResourceUrl(demoAppURL);
+
+
+    this.queryParamSubscription = this.route.queryParams.subscribe(params => {
+      if (params['showDemo']) {
+        this.spinner.show();
+        this.isDemoApp = true;
+        this.httpClient.get('assets/demo-chat.txt', { responseType: 'text' })
+          .subscribe(data => this.parseChatAndAnalyze(data));
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.queryParamSubscription.unsubscribe();
   }
 
   public onFileSelect(fileList: FileList): void {
@@ -71,8 +93,8 @@ export class AppComponent implements OnInit {
     }
   }
 
-  onScrollTo(location: string){
-    setTimeout(() => { this.router.navigate([], { fragment: location ,queryParamsHandling: 'preserve'}); }, 500);
+  onScrollTo(location: string) {
+    setTimeout(() => { this.router.navigate([], { fragment: location, queryParamsHandling: 'preserve' }); }, 500);
   }
 
   private processAndUploadFileToS3(file) {
@@ -84,49 +106,51 @@ export class AppComponent implements OnInit {
   }
 
   private processFile(file) {
-    let spinner = this.spinner;
     this.spinner.show();
 
     let fileReader: FileReader = new FileReader();
-    let self = this;
 
-    fileReader.onloadend = function (x) {
-      self.fileContent = fileReader.result;
-
-      whatsappChatParser
-        .parseString(fileReader.result.toString())
-        .then(messages => {
-          self.messages = messages;
-
-          for (let message of messages) {
-            if (self.analysisPerAuthor.has(message.author)) {
-              self.analysisPerAuthor.get(message.author).addMessage(message);
-            } else {
-              const authorsAnlysis = new DataAnalysis(message.author);
-              authorsAnlysis.addMessage(message);
-              self.analysisPerAuthor.set(message.author, authorsAnlysis);
-            }
-          }
-
-          // Remove System user Analysis
-          self.analysisPerAuthor.delete('System');
-
-          for (let analysis of self.analysisPerAuthor) {
-            self.totalMsgCount = self.totalMsgCount + analysis[1].messageCount;
-          }
-
-          console.log(self.analysisPerAuthor);
-
-          self.isDataAnalyzed = true;
-
-          spinner.hide();
-          self.surprise();
-        })
-        .catch(err => {
-          alert("Something went wrong");
-        });
+    fileReader.onloadend = (x) => {
+      this.parseChatAndAnalyze(fileReader.result.toString());
     }
     fileReader.readAsText(file);
+  }
+
+
+  private parseChatAndAnalyze(filecontent: string) {
+    this.spinner.show();
+    whatsappChatParser
+      .parseString(filecontent)
+      .then(messages => {
+        this.messages = messages;
+
+        for (let message of messages) {
+          if (this.analysisPerAuthor.has(message.author)) {
+            this.analysisPerAuthor.get(message.author).addMessage(message);
+          } else {
+            const authorsAnlysis = new DataAnalysis(message.author);
+            authorsAnlysis.addMessage(message);
+            this.analysisPerAuthor.set(message.author, authorsAnlysis);
+          }
+        }
+
+        // Remove System user Analysis
+        this.analysisPerAuthor.delete('System');
+
+        for (let analysis of this.analysisPerAuthor) {
+          this.totalMsgCount = this.totalMsgCount + analysis[1].messageCount;
+        }
+
+        console.log(this.analysisPerAuthor);
+
+        this.isDataAnalyzed = true;
+
+        this.spinner.hide();
+        this.surprise();
+      })
+      .catch(err => {
+        alert("Something went wrong");
+      });
   }
 
   private resetState() {
@@ -208,10 +232,14 @@ export class DataAnalysis {
   addMessage(message: Message) {
     getEmojiFrequency(this.emojiCountMap, message.message);
 
-    this.hourlyMessageCount[message.date.getHours()] += 1; 
+    this.hourlyMessageCount[message.date.getHours()] += 1;
 
     this.weekDayMessageCount[message.date.getDay()] += 1;
 
     this.messages.push(message);
+  }
+
+  ngOnDestory() {
+
   }
 }

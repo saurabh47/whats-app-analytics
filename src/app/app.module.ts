@@ -11,6 +11,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HourlyMsgCntBarChartComponent } from './hourly-msg-cnt-bar-chart/hourly-msg-cnt-bar-chart.component';
 import { WeekDayMsgCntBarChartComponent } from './week-day-msg-cnt-bar-chart/week-day-msg-cnt-bar-chart.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { WeekDayMsgCntBarChartComponent } from './week-day-msg-cnt-bar-chart/wee
     AppRoutingModule,
     HighchartsChartModule,
     NgxSpinnerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
