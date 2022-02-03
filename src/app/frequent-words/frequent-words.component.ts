@@ -14,9 +14,18 @@ import { DataAnalysis } from "../app.component";
 export class FrequentWordsComponent implements OnInit {
   @Input("authorAnalysis") authorAnalysis: DataAnalysis;
 
+  updateFlag = true;
   Highcharts = Highcharts;
+  chartConstructor = 'chart';
 
-  constructor() {}
+  chartCallback = (chart) => {
+    setTimeout(() => {
+      chart.reflow();
+    }, 0);
+  };
+
+
+  constructor() { }
 
   chartOptions = {
     title: {
@@ -28,10 +37,6 @@ export class FrequentWordsComponent implements OnInit {
         placementStrategy: "random",
         name: "Occurrences",
         data: [
-          { name: "bad", weight: 1 },
-          { name: "change", weight: 2 },
-          { name: "collaborative", weight: 1 },
-          { name: "flexible", weight: 3 },
         ],
       },
     ],
