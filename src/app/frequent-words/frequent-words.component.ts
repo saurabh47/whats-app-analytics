@@ -4,8 +4,7 @@ declare var require: any;
 const Wordcloud = require("highcharts/modules/wordcloud");
 Wordcloud(Highcharts);
 import { DataAnalysis } from "../app.component";
-import countWords from "count-words-occurrence";
-import { title } from "process";
+
 
 @Component({
   selector: "app-frequent-words",

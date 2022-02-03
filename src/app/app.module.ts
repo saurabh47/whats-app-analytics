@@ -13,8 +13,6 @@ import { HourlyMsgCntBarChartComponent } from './hourly-msg-cnt-bar-chart/hourly
 import { WeekDayMsgCntBarChartComponent } from './week-day-msg-cnt-bar-chart/week-day-msg-cnt-bar-chart.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FrequentWordsComponent } from "./frequent-words/frequent-words.component";
-import { AngularD3CloudModule } from "angular-d3-cloud";
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +30,6 @@ import { AngularD3CloudModule } from "angular-d3-cloud";
     NgxSpinnerModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    AngularD3CloudModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
