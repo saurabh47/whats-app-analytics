@@ -11,3 +11,15 @@ export function getEmojiFrequency(freqMap: any,str: string) {
         }
     }
 };
+
+
+export const getWordCount = (wordMap: Map<string, number>, str: string) => {
+  const words = str.split(/[,\. ]+/g);
+  for (let word of words) {
+    if (wordMap.has(word)) {
+      wordMap.set(word, wordMap.get(word) + 1);
+    } else {
+      wordMap.set(word, 1);
+    }
+  }
+};

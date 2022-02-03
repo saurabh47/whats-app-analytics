@@ -7,20 +7,20 @@ import * as JSZip from 'jszip';
 import * as confetti from 'canvas-confetti';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES, DEMO_APP_URL } from 'src/@common/constant/config';
-import { getEmojiFrequency } from './util';
+import { getEmojiFrequency, getWordCount } from './util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'whats-app-analytics';
-  fileContent: string | any = '';
+  title = "whats-app-analytics";
+  fileContent: string | any = "";
   totalMsgCount: number = 0;
   messages: Message[] = [];
 
@@ -36,24 +36,27 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isDemoApp = false;
 
-  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute, private router: Router,
-    private sanitizer: DomSanitizer, private httpClient: HttpClient) {
-
-  }
-
+  constructor(
+    private spinner: NgxSpinnerService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private httpClient: HttpClient
+  ) {}
 
   ngOnInit() {
     const demoAppURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?showDemo=true`;
 
-    this.sanitizedDemoURL = this.sanitizer.bypassSecurityTrustResourceUrl(demoAppURL);
+    this.sanitizedDemoURL =
+      this.sanitizer.bypassSecurityTrustResourceUrl(demoAppURL);
 
-
-    this.queryParamSubscription = this.route.queryParams.subscribe(params => {
-      if (params['showDemo']) {
+    this.queryParamSubscription = this.route.queryParams.subscribe((params) => {
+      if (params["showDemo"]) {
         this.spinner.show();
         this.isDemoApp = true;
-        this.httpClient.get('assets/demo-chat.txt', { responseType: 'text' })
-          .subscribe(data => this.parseChatAndAnalyze(data));
+        this.httpClient
+          .get("assets/demo-chat.txt", { responseType: "text" })
+          .subscribe((data) => this.parseChatAndAnalyze(data));
       }
     });
   }
@@ -71,30 +74,43 @@ export class AppComponent implements OnInit, OnDestroy {
 
     let extension = this.getFileExtension(file.name);
 
-    if (extension == 'zip') {
+    if (extension == "zip") {
       let zip = new JSZip();
-      zip.loadAsync(file) /* = file blob */
-        .then(function (zipContent) {
-          // process ZIP file content here
-          for (let fileName in zipContent.files) {
-            if (self.getFileExtension(fileName) == 'txt') {
-              zipContent.files[fileName].async('blob').then(function (fileData) {
-                let extractedFile = new File([fileData], fileName);
-                self.processAndUploadFileToS3(extractedFile);
-              });
-              break;
+      zip
+        .loadAsync(file) /* = file blob */
+        .then(
+          function (zipContent) {
+            // process ZIP file content here
+            for (let fileName in zipContent.files) {
+              if (self.getFileExtension(fileName) == "txt") {
+                zipContent.files[fileName]
+                  .async("blob")
+                  .then(function (fileData) {
+                    let extractedFile = new File([fileData], fileName);
+                    self.processAndUploadFileToS3(extractedFile);
+                  });
+                break;
+              }
             }
+          },
+          function () {
+            alert("Not a valid zip file");
           }
-        }, function () { alert("Not a valid zip file") });
-    } else if (extension == 'txt') {
-      this.processAndUploadFileToS3(file)
+        );
+    } else if (extension == "txt") {
+      this.processAndUploadFileToS3(file);
     } else {
       alert("Invalid file");
     }
   }
 
   onScrollTo(location: string) {
-    setTimeout(() => { this.router.navigate([], { fragment: location, queryParamsHandling: 'preserve' }); }, 500);
+    setTimeout(() => {
+      this.router.navigate([], {
+        fragment: location,
+        queryParamsHandling: "preserve",
+      });
+    }, 500);
   }
 
   private processAndUploadFileToS3(file) {
@@ -112,16 +128,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
     fileReader.onloadend = (x) => {
       this.parseChatAndAnalyze(fileReader.result.toString());
-    }
+    };
     fileReader.readAsText(file);
   }
-
 
   private parseChatAndAnalyze(filecontent: string) {
     this.spinner.show();
     whatsappChatParser
       .parseString(filecontent)
-      .then(messages => {
+      .then((messages) => {
         this.messages = messages;
 
         for (let message of messages) {
@@ -135,7 +150,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         // Remove System user Analysis
-        this.analysisPerAuthor.delete('System');
+        this.analysisPerAuthor.delete("System");
 
         for (let analysis of this.analysisPerAuthor) {
           this.totalMsgCount = this.totalMsgCount + analysis[1].messageCount;
@@ -148,7 +163,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.spinner.hide();
         this.surprise();
       })
-      .catch(err => {
+      .catch((err) => {
         alert("Something went wrong");
       });
   }
@@ -161,64 +176,66 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private uploadFileToS3(file) {
     const contentType = file.type;
-    const bucket = new S3(
-      {
-        accessKeyId: AWS_KEY,
-        secretAccessKey: AWS_SECRET,
-        region: 'ap-south-1'
-      }
-    );
+    const bucket = new S3({
+      accessKeyId: AWS_KEY,
+      secretAccessKey: AWS_SECRET,
+      region: "ap-south-1",
+    });
     const params = {
       Bucket: AWS_S3_BUCKET,
       Key: `${AWS_S3_BUCKET_DIRECTORY}/${Date.now()}-${file.name}`,
       Body: file,
-      ACL: 'public-read',
-      ContentType: contentType
+      ACL: "public-read",
+      ContentType: contentType,
     };
     bucket.upload(params, function (err, data) {
       if (err) {
-        console.log('There was an error uploading your file: ', err);
+        console.log("There was an error uploading your file: ", err);
         return false;
       }
-      console.log('Successfully uploaded file.', data);
+      console.log("Successfully uploaded file.", data);
       return true;
     });
   }
 
   private getFileExtension(fileName: string) {
-    return fileName.split('.').pop()
+    return fileName.split(".").pop();
   }
 
   clicked = false;
   public surprise(): void {
     confetti.create(undefined, { resize: true, useWorker: false })({
-      shapes: ['square'],
+      shapes: ["square"],
       particleCount: 200,
       spread: 90,
       origin: {
-        y: (0.5),
-        x: (0.5)
-      }
-    })
+        y: 0.5,
+        x: 0.5,
+      },
+    });
   }
 
   public getColorCode(idx: number): string {
-    const opacity = '50';
+    const opacity = "50";
     return COLOR_CODES[idx % COLOR_CODES.length] + opacity;
   }
 }
 
 export class DataAnalysis {
-
   author: string;
 
   messages: Message[] = [];
 
+  msg: string[] = [];
+
   emojiCountMap: object = {};
+
 
   hourlyMessageCount: number[] = Array(24).fill(0);
 
   weekDayMessageCount: number[] = Array(7).fill(0);
+
+  wordCount: Map<string, number> = new Map();
 
   get messageCount() {
     return this.messages.length;
@@ -232,14 +249,15 @@ export class DataAnalysis {
   addMessage(message: Message) {
     getEmojiFrequency(this.emojiCountMap, message.message);
 
+    getWordCount(this.wordCount, message.message);
+
     this.hourlyMessageCount[message.date.getHours()] += 1;
 
     this.weekDayMessageCount[message.date.getDay()] += 1;
 
     this.messages.push(message);
+    this.msg.push(message.message);
   }
 
-  ngOnDestory() {
-
-  }
+  ngOnDestory() {}
 }
