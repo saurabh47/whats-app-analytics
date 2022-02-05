@@ -12,7 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HourlyMsgCntBarChartComponent } from './hourly-msg-cnt-bar-chart/hourly-msg-cnt-bar-chart.component';
 import { WeekDayMsgCntBarChartComponent } from './week-day-msg-cnt-bar-chart/week-day-msg-cnt-bar-chart.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { FrequentWordsComponent } from "./frequent-words/frequent-words.component";
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
     PieChartMsgCompComponent,
     EmojiBarChartComponent,
     HourlyMsgCntBarChartComponent,
-    WeekDayMsgCntBarChartComponent
+    WeekDayMsgCntBarChartComponent,
+    FrequentWordsComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,9 +29,9 @@ import { HttpClientModule } from '@angular/common/http';
     HighchartsChartModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
