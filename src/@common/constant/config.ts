@@ -8,5 +8,3 @@ export const AWS_SECRET = '{{AWS.SECRET_ACCESS_KEY}}';
 export const AWS_S3_BUCKET = '{{AWS.S3_BUCKET_NAME}}'
 
 export const AWS_S3_BUCKET_DIRECTORY = '{{AWS.S3_BUCKET_DIRECTORY}}';
-
-export const DEMO_APP_URL = 'http://whats-app-analytics-v2.s3-website.ap-south-1.amazonaws.com/';

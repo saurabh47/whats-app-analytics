@@ -6,7 +6,7 @@ import * as S3 from 'aws-sdk/clients/s3';
 import * as JSZip from 'jszip';
 import * as confetti from 'canvas-confetti';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES, DEMO_APP_URL } from 'src/@common/constant/config';
+import { AWS_KEY, AWS_S3_BUCKET, AWS_S3_BUCKET_DIRECTORY, AWS_SECRET, COLOR_CODES } from 'src/@common/constant/config';
 import { getEmojiFrequency, getWordCount } from './util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
