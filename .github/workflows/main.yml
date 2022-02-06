@@ -12,6 +12,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.1.0
+      
+      - name: Set AWS Credentials
+        run: |
+          echo $PATH
+          ls -lh
+          cat src/@common/constant/config.ts
+          
+          sed -i "s#{{AWS.ACCESS_KEY_ID}}#${{ secrets.AWS_ACCESS_KEY_ID }}#g" src/@common/constant/config.ts
+          sed -i "s#{{AWS.SECRET_ACCESS_KEY}}#${{ secrets.AWS_SECRET_ACCESS_KEY }}#g" src/@common/constant/config.ts
+          sed -i "s#{{AWS.S3_BUCKET_NAME}}#${{ secrets.AWS_S3_BUCKET_NAME }}#g" src/@common/constant/config.ts
+          sed -i "s#{{AWS.S3_BUCKET_DIRECTORY}}#${{ secrets.AWS_S3_BUCKET_DIRECTORY }}#g" src/@common/constant/config.ts
+
+          cat src/@common/constant/config.ts
+        shell: bash
 
       - name: Cache node modules
         uses: actions/cache@v1.1.2
