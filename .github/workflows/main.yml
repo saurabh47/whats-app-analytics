@@ -12,6 +12,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.1.0
+      
+      - name: Display the path & 
+        run: |
+          echo $PATH
+          ls -lh
+        shell: bash
 
       - name: Cache node modules
         uses: actions/cache@v1.1.2
