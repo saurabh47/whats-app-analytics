@@ -27,7 +27,7 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Build & Deploy App to Github Pages
 
 ```
-ng build --prod --base-href "https://saurabh47.github.io/whats-app-analytics/"
+ng build --prod --base-href "https://saurabh.gangamwar.com/whats-app-analytics/"
 npx angular-cli-ghpages --dir=dist/whats-app-analytics
 ```
 ## Further help
