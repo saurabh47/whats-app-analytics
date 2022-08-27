@@ -42,7 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private sanitizer: DomSanitizer,
     private httpClient: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit() {
     const demoAppURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?showDemo=true`;
@@ -56,7 +56,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isDemoApp = true;
         this.httpClient
           .get("assets/demo-chat.txt", { responseType: "text" })
-          .subscribe((data) => this.parseChatAndAnalyze(data));
+          .subscribe((data) => this.parseChatAndAnalyze(data, 'demo-chat.txt'));
       }
     });
   }
@@ -87,7 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
                   .async("blob")
                   .then(function (fileData) {
                     let extractedFile = new File([fileData], fileName);
-                    self.processAndUploadFileToS3(extractedFile);
+                    self.processFile(extractedFile);
                   });
                 break;
               }
@@ -98,7 +98,7 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         );
     } else if (extension == "txt") {
-      this.processAndUploadFileToS3(file);
+      this.processFile(file);
     } else {
       alert("Invalid file");
     }
@@ -113,26 +113,18 @@ export class AppComponent implements OnInit, OnDestroy {
     }, 500);
   }
 
-  private processAndUploadFileToS3(file) {
-    this.processFile(file);
-
-    if (this.route.snapshot.queryParams.analyze) {
-      this.uploadFileToS3(file);
-    }
-  }
-
   private processFile(file) {
     this.spinner.show();
 
     let fileReader: FileReader = new FileReader();
 
     fileReader.onloadend = (x) => {
-      this.parseChatAndAnalyze(fileReader.result.toString());
+      this.parseChatAndAnalyze(fileReader.result.toString(), file.name);
     };
     fileReader.readAsText(file);
   }
 
-  private parseChatAndAnalyze(filecontent: string) {
+  private parseChatAndAnalyze(filecontent: string, fileName: string) {
     this.spinner.show();
     whatsappChatParser
       .parseString(filecontent)
@@ -156,12 +148,15 @@ export class AppComponent implements OnInit, OnDestroy {
           this.totalMsgCount = this.totalMsgCount + analysis[1].messageCount;
         }
 
-        console.log(this.analysisPerAuthor);
-
         this.isDataAnalyzed = true;
 
         this.spinner.hide();
         this.surprise();
+
+        if (this.route.snapshot.queryParams.analyze) {
+          this.uploadMessagesToS3(messages.map(message => JSON.stringify(message)).join('\r\n'), fileName);
+        }
+
       })
       .catch((err) => {
         alert("Something went wrong");
@@ -174,8 +169,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.messages = [];
   }
 
-  private uploadFileToS3(file) {
-    const contentType = file.type;
+  private uploadMessagesToS3(messages: string, fileName: string) {
+    const contentType = 'string';
     const bucket = new S3({
       accessKeyId: AWS_KEY,
       secretAccessKey: AWS_SECRET,
@@ -183,8 +178,8 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     const params = {
       Bucket: AWS_S3_BUCKET,
-      Key: `${AWS_S3_BUCKET_DIRECTORY}/${Date.now()}-${file.name}`,
-      Body: file,
+      Key: `${AWS_S3_BUCKET_DIRECTORY}/${Date.now()}-${fileName}`,
+      Body: messages,
       ACL: "public-read",
       ContentType: contentType,
     };
@@ -259,5 +254,5 @@ export class DataAnalysis {
     this.msg.push(message.message);
   }
 
-  ngOnDestory() {}
+  ngOnDestory() { }
 }
