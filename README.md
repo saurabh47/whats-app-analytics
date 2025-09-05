@@ -1,6 +1,8 @@
 # WhatsApp Analytics
 
-[Demo](https://saurabh47.github.io/whats-app-analytics/)
+[Get it a try](https://saurabh47.github.io/whats-app-analytics/)
+<img width="1526" height="951" alt="image" src="https://github.com/user-attachments/assets/5849c702-85ae-4716-bc04-d70536648f97" />
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.24.
 
